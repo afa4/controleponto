@@ -8,7 +8,7 @@ public enum WorkdayQuery {
 
     INSERT("workday/insert-workday.sql"),
     FIND_BY_DATE("workday/select-workday-by-date.sql"),
-    UPDATE_TIME_REGISTER("workday/update-workday-moment.sql");
+    SET_TIME_REGISTER("workday/set-workday-time-register.sql");
 
     private final String query;
 

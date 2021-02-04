@@ -7,7 +7,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -21,7 +20,7 @@ public class WorkdayRepository {
     private final NamedParameterJdbcTemplate template;
     private final WorkdayMapper mapper;
 
-    public WorkdayRepository(NamedParameterJdbcTemplate template, WorkdayMapper mapper) throws IOException {
+    public WorkdayRepository(NamedParameterJdbcTemplate template, WorkdayMapper mapper) {
         this.template = template;
         this.mapper = mapper;
     }
@@ -31,7 +30,7 @@ public class WorkdayRepository {
     }
 
     public void setTimeRegister(Workday workday, String dateTymeType, LocalDateTime dateTime) {
-        String query = UPDATE_TIME_REGISTER.getQuery().replace(":moment", dateTymeType);
+        String query = SET_TIME_REGISTER.getQuery().replace(":moment", dateTymeType);
         template.update(query, Map.of("timestmp", dateTime.toString(), "id", workday.getId()));
     }
 
