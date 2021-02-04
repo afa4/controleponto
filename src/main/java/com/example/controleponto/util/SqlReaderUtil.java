@@ -6,13 +6,15 @@ import java.nio.charset.StandardCharsets;
 
 public class SqlReaderUtil {
 
-    public static String read(String sqlName) throws IOException {
+    public static String read(String sqlName) {
         var inputStream = ClassLoader.getSystemResourceAsStream("sql/" + sqlName);
 
         if (inputStream != null) {
-            var bytes = inputStream.readAllBytes();
-            return new String(bytes, StandardCharsets.UTF_8);
+            try {
+                var bytes = inputStream.readAllBytes();
+                return new String(bytes, StandardCharsets.UTF_8);
+            } catch (IOException ignored) { }
         }
-        throw new IOException("Null Input Stream");
+        throw new RuntimeException();
     }
 }

@@ -1,0 +1,1 @@
+UPDATE workday set :moment = :timestmp WHERE id = :id;

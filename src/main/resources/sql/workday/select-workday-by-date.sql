@@ -1,8 +1,7 @@
-SELECT (id,
-        started_at as startedAt,
-        paused_at as pauseAt,
-        returned_at as returnedAt,
-        ended_at as endedAt,
-        seconds_worked as secondsWorked)
-from workday
-where cast(started_at as date) = :referenceDate
+SELECT id,
+       started_at,
+       paused_at,
+       returned_at,
+       ended_at,
+       seconds_worked
+from workday w where cast(w.started_at as date) = :referenceDate;

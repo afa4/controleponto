@@ -1,2 +1,1 @@
-INSERT INTO workday(started_at)
-values (:startedAt)
+INSERT INTO workday(started_at) values (:startedAt);
