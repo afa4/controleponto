@@ -13,34 +13,33 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 import static com.example.controleponto.repository.query.WorkdayQuery.*;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 @Slf4j
 @Repository
 public class WorkdayRepository {
 
-    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate template;
     private final WorkdayMapper mapper;
 
-    public WorkdayRepository(NamedParameterJdbcTemplate jdbcTemplate, WorkdayMapper mapper) throws IOException {
-        this.jdbcTemplate = jdbcTemplate;
+    public WorkdayRepository(NamedParameterJdbcTemplate template, WorkdayMapper mapper) throws IOException {
+        this.template = template;
         this.mapper = mapper;
     }
 
     public void insert(LocalDateTime startedAt) {
-        jdbcTemplate.update(INSERT.getQuery(), Map.of("startedAt", startedAt));
+        template.update(INSERT.getQuery(), Map.of("startedAt", startedAt));
+    }
+
+    public void setTimeRegister(Workday workday, String dateTymeType, LocalDateTime dateTime) {
+        String query = UPDATE_TIME_REGISTER.getQuery().replace(":moment", dateTymeType);
+        template.update(query, Map.of("timestmp", dateTime.toString(), "id", workday.getId()));
     }
 
     public Workday findByDate(LocalDate date) {
         try {
-            return jdbcTemplate.queryForObject(FIND_BY_DATE.getQuery(), Map.of("referenceDate", date.toString()), mapper);
+            return template.queryForObject(FIND_BY_DATE.getQuery(), Map.of("referenceDate", date.toString()), mapper);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
-    }
-
-    public void update(String query, Map<String, Object> params) {
-        jdbcTemplate.update(query, params);
     }
 }
