@@ -1,13 +1,17 @@
 package com.example.controleponto.entity;
 
+import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
+@Builder
 public class Workday {
     private Long id;
-    private Long startedAt;
-    private String pausedAt;
-    private String returnedAt;
-    private String endedAt;
+    private LocalDateTime startedAt;
+    private LocalDateTime pausedAt;
+    private LocalDateTime returnedAt;
+    private LocalDateTime endedAt;
     private Integer secondsWorked;
 }

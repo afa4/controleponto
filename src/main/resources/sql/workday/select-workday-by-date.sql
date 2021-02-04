@@ -5,4 +5,4 @@ SELECT (id,
         ended_at as endedAt,
         seconds_worked as secondsWorked)
 from workday
-where cast(started_at as date) = :reference_date
+where cast(started_at as date) = :referenceDate
