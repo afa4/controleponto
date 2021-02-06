@@ -2,6 +2,7 @@ package com.example.controleponto.exception.handler;
 
 import com.example.controleponto.entity.dto.MessageResp;
 import com.example.controleponto.exception.CompletedWorkdayException;
+import com.example.controleponto.exception.ForbiddenRegisterException;
 import com.example.controleponto.exception.TimeRegisterExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({CompletedWorkdayException.class})
     public ResponseEntity<Object> handleCompletedWorkdayException(
             CompletedWorkdayException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new MessageResp(ex.getMessage()));
+    }
+
+    @ExceptionHandler({ForbiddenRegisterException.class})
+    public ResponseEntity<Object> handleForbiddenTimeRegister(
+            ForbiddenRegisterException ex, WebRequest request) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new MessageResp(ex.getMessage()));
     }

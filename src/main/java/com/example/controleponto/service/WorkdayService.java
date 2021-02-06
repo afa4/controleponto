@@ -3,6 +3,7 @@ package com.example.controleponto.service;
 import com.example.controleponto.entity.Workday;
 import com.example.controleponto.entity.enumeration.TimeRegisterType;
 import com.example.controleponto.exception.CompletedWorkdayException;
+import com.example.controleponto.exception.ForbiddenRegisterException;
 import com.example.controleponto.exception.TimeRegisterExistsException;
 import com.example.controleponto.repository.WorkdayRepository;
 import lombok.AllArgsConstructor;
@@ -23,23 +24,31 @@ public class WorkdayService {
 
     private final WorkdayRepository workdayRepository;
 
-    public void registerTime(LocalDateTime time) {
-        var workday = workdayRepository.findByDate(time.toLocalDate());
+    public void registerTime(LocalDateTime dateTime) {
+        var workday = workdayRepository.findByDate(dateTime.toLocalDate());
 
         if (isNull(workday)) {
-            workdayRepository.insert(time);
-        } else if (isTimeAlreadyInserted(workday, time)) {
+            workdayRepository.insert(dateTime);
+        } else if (isDateTimeAlreadyInserted(workday, dateTime)) {
             throw new TimeRegisterExistsException();
+        } else if (isDateTimeBeforePreviousRegister(workday, dateTime)) {
+            throw new ForbiddenRegisterException();
         } else {
-            insertTimeRegister(workday, time);
+            insertTimeRegister(workday, dateTime);
         }
     }
 
-    private boolean isTimeAlreadyInserted(Workday workday, LocalDateTime time) {
+    private boolean isDateTimeAlreadyInserted(Workday workday, LocalDateTime time) {
         return workday.getStartedAt().equals(time) ||
                 workday.getPausedAt().equals(time) ||
                 workday.getReturnedAt().equals(time) ||
                 workday.getEndedAt().equals(time);
+    }
+
+    private boolean isDateTimeBeforePreviousRegister(Workday workday, LocalDateTime time) {
+        return time.isBefore(workday.getStartedAt()) ||
+                (nonNull(workday.getPausedAt()) && time.isBefore(workday.getPausedAt())) ||
+                (nonNull(workday.getReturnedAt()) && time.isBefore(workday.getReturnedAt()));
     }
 
     private void insertTimeRegister(Workday workday, LocalDateTime dateTime) {
