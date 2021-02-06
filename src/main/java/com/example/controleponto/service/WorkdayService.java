@@ -39,10 +39,10 @@ public class WorkdayService {
     }
 
     private boolean isDateTimeAlreadyInserted(Workday workday, LocalDateTime time) {
-        return workday.getStartedAt().equals(time) ||
-                workday.getPausedAt().equals(time) ||
-                workday.getReturnedAt().equals(time) ||
-                workday.getEndedAt().equals(time);
+        return time.equals(workday.getStartedAt()) ||
+                time.equals(workday.getPausedAt()) ||
+                time.equals(workday.getReturnedAt()) ||
+                time.equals(workday.getEndedAt());
     }
 
     private boolean isDateTimeBeforePreviousRegister(Workday workday, LocalDateTime time) {

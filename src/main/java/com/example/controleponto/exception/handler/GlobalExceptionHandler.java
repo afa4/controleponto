@@ -19,28 +19,23 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({DateTimeParseException.class})
     public ResponseEntity<Object> handleDateTimeParseException(
             DateTimeParseException ex, WebRequest request) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new MessageResp("Data e hora em formato inválido"));
+        return errorMessage(HttpStatus.BAD_REQUEST, "Data e hora em formato inválido");
     }
 
-    @ExceptionHandler({CompletedWorkdayException.class})
+    @ExceptionHandler({CompletedWorkdayException.class, ForbiddenRegisterException.class})
     public ResponseEntity<Object> handleCompletedWorkdayException(
-            CompletedWorkdayException ex, WebRequest request) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(new MessageResp(ex.getMessage()));
-    }
-
-    @ExceptionHandler({ForbiddenRegisterException.class})
-    public ResponseEntity<Object> handleForbiddenTimeRegister(
-            ForbiddenRegisterException ex, WebRequest request) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(new MessageResp(ex.getMessage()));
+            RuntimeException ex, WebRequest request) {
+        return errorMessage(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
     @ExceptionHandler({TimeRegisterExistsException.class})
     public ResponseEntity<Object> handleTimeRegisterExistsException(
             TimeRegisterExistsException ex, WebRequest request) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new MessageResp(ex.getMessage()));
+        return errorMessage(HttpStatus.CONFLICT, ex.getMessage());
     }
+
+    private ResponseEntity<Object> errorMessage(HttpStatus status, String message) {
+        return ResponseEntity.status(status).body(new MessageResp(message));
+    }
+
 }
