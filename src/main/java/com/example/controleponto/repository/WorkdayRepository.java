@@ -32,6 +32,7 @@ public class WorkdayRepository {
 
     public void setTimeRegister(Workday workday, TimeRegisterType type, LocalDateTime dateTime) {
         String query = SET_TIME_REGISTER.getQuery().replace(":moment", type.getValue());
+        log.info(query);
         template.update(query, Map.of("timestmp", dateTime.toString(), "id", workday.getId()));
     }
 
@@ -41,5 +42,13 @@ public class WorkdayRepository {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
+    }
+
+    public void updateWorkedSeconds(Workday workday) {
+        String query = UPDATE_WORKED_SECONDS.getQuery();
+        template.update(query,
+                Map.of("secondsWorked", workday.getSecondsWorked(),
+                        "id", workday.getId()));
+
     }
 }

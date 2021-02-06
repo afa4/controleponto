@@ -13,5 +13,5 @@ public class Workday {
     private LocalDateTime pausedAt;
     private LocalDateTime returnedAt;
     private LocalDateTime endedAt;
-    private Integer secondsWorked;
+    private Long secondsWorked;
 }

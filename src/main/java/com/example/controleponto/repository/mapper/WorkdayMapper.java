@@ -23,7 +23,7 @@ public class WorkdayMapper implements RowMapper<Workday> {
                 .pausedAt(parse(resultSet.getString("paused_at")))
                 .returnedAt(parse(resultSet.getString("returned_at")))
                 .endedAt(parse(resultSet.getString("ended_at")))
-                .secondsWorked(resultSet.getInt("seconds_worked"))
+                .secondsWorked(resultSet.getLong("seconds_worked"))
                 .build();
     }
 

@@ -1,0 +1,1 @@
+UPDATE workday set seconds_worked = :secondsWorked where id = :id;
