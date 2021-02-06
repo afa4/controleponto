@@ -1,6 +1,6 @@
 package com.example.controleponto.service;
 
-import com.example.controleponto.entity.TimeRegisterType;
+import com.example.controleponto.entity.enumeration.TimeRegisterType;
 import com.example.controleponto.entity.Workday;
 import com.example.controleponto.exception.CompletedWorkdayException;
 import com.example.controleponto.repository.WorkdayRepository;

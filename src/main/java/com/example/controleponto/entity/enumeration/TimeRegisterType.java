@@ -1,4 +1,4 @@
-package com.example.controleponto.entity;
+package com.example.controleponto.entity.enumeration;
 
 import lombok.Getter;
 

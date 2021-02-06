@@ -1,6 +1,6 @@
 package com.example.controleponto.repository;
 
-import com.example.controleponto.entity.TimeRegisterType;
+import com.example.controleponto.entity.enumeration.TimeRegisterType;
 import com.example.controleponto.entity.Workday;
 import com.example.controleponto.repository.mapper.WorkdayMapper;
 import lombok.extern.slf4j.Slf4j;
