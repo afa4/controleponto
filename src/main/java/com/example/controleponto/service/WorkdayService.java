@@ -1,5 +1,6 @@
 package com.example.controleponto.service;
 
+import com.example.controleponto.entity.TimeRegisterType;
 import com.example.controleponto.entity.Workday;
 import com.example.controleponto.exception.CompletedWorkdayException;
 import com.example.controleponto.repository.WorkdayRepository;
@@ -30,18 +31,18 @@ public class WorkdayService {
     }
 
     private void insertTimeRegister(Workday workday, LocalDateTime dateTime) {
-        String dateTimeType;
+        TimeRegisterType registerType;
         if (isNull(workday.getPausedAt())) {
-            dateTimeType = "paused_at";
+            registerType = TimeRegisterType.PAUSED_AT;
         } else if (isNull(workday.getReturnedAt())) {
             // calculate seconds worked
-            dateTimeType = "returned_at";
+            registerType = TimeRegisterType.RETURNED_AT;
         } else if (nonNull(workday.getEndedAt())) {
             throw new CompletedWorkdayException();
         } else {
             // calculate seconds worked
-            dateTimeType = "ended_at";
+            registerType = TimeRegisterType.ENDED_AT;
         }
-        workdayRepository.setTimeRegister(workday, dateTimeType, dateTime);
+        workdayRepository.setTimeRegister(workday, registerType, dateTime);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.controleponto.repository;
 
+import com.example.controleponto.entity.TimeRegisterType;
 import com.example.controleponto.entity.Workday;
 import com.example.controleponto.repository.mapper.WorkdayMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +30,8 @@ public class WorkdayRepository {
         template.update(INSERT.getQuery(), Map.of("startedAt", startedAt));
     }
 
-    public void setTimeRegister(Workday workday, String dateTymeType, LocalDateTime dateTime) {
-        String query = SET_TIME_REGISTER.getQuery().replace(":moment", dateTymeType);
+    public void setTimeRegister(Workday workday, TimeRegisterType type, LocalDateTime dateTime) {
+        String query = SET_TIME_REGISTER.getQuery().replace(":moment", type.getValue());
         template.update(query, Map.of("timestmp", dateTime.toString(), "id", workday.getId()));
     }
 
