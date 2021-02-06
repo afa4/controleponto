@@ -3,6 +3,7 @@ package com.example.controleponto.service;
 import com.example.controleponto.entity.Workday;
 import com.example.controleponto.entity.enumeration.TimeRegisterType;
 import com.example.controleponto.exception.CompletedWorkdayException;
+import com.example.controleponto.exception.TimeRegisterExistsException;
 import com.example.controleponto.repository.WorkdayRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +28,18 @@ public class WorkdayService {
 
         if (isNull(workday)) {
             workdayRepository.insert(time);
+        } else if (isTimeAlreadyInserted(workday, time)) {
+            throw new TimeRegisterExistsException();
         } else {
             insertTimeRegister(workday, time);
         }
+    }
+
+    private boolean isTimeAlreadyInserted(Workday workday, LocalDateTime time) {
+        return workday.getStartedAt().equals(time) ||
+                workday.getPausedAt().equals(time) ||
+                workday.getReturnedAt().equals(time) ||
+                workday.getEndedAt().equals(time);
     }
 
     private void insertTimeRegister(Workday workday, LocalDateTime dateTime) {

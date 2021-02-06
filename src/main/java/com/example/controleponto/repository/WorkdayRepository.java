@@ -1,7 +1,7 @@
 package com.example.controleponto.repository;
 
-import com.example.controleponto.entity.enumeration.TimeRegisterType;
 import com.example.controleponto.entity.Workday;
+import com.example.controleponto.entity.enumeration.TimeRegisterType;
 import com.example.controleponto.repository.mapper.WorkdayMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -32,8 +32,9 @@ public class WorkdayRepository {
 
     public void setTimeRegister(Workday workday, TimeRegisterType type, LocalDateTime dateTime) {
         String query = SET_TIME_REGISTER.getQuery().replace(":moment", type.getValue());
-        log.info(query);
-        template.update(query, Map.of("timestmp", dateTime.toString(), "id", workday.getId()));
+        template.update(query,
+                Map.of("timestmp", dateTime.toString(),
+                        "id", workday.getId()));
     }
 
     public Workday findByDate(LocalDate date) {
