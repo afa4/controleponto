@@ -30,8 +30,21 @@ public class WorkdayRepository {
         template.update(INSERT.getQuery(), Map.of("startedAt", startedAt));
     }
 
-    public void setTimeRegister(Workday workday, TimeRegisterType type, LocalDateTime dateTime) {
-        String query = SET_TIME_REGISTER.getQuery().replace(":moment", type.getValue());
+    public void setTimeRegister(Workday workday, TimeRegisterType type) {
+        LocalDateTime dateTime;
+        switch (type) {
+            case PAUSED_AT:
+                dateTime = workday.getPausedAt();
+                break;
+            case RETURNED_AT:
+                dateTime = workday.getReturnedAt();
+                break;
+            default:
+                dateTime = workday.getEndedAt();
+                break;
+        }
+
+        String query = SET_TIME_REGISTER.getQuery().replace(":moment", type.toString().toLowerCase());
         template.update(query,
                 Map.of("timestmp", dateTime.toString(),
                         "id", workday.getId()));
