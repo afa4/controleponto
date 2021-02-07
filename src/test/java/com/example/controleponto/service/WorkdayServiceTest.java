@@ -2,6 +2,7 @@ package com.example.controleponto.service;
 
 import com.example.controleponto.entity.Workday;
 import com.example.controleponto.exception.CompletedWorkdayException;
+import com.example.controleponto.exception.TimeRegisterExistsException;
 import com.example.controleponto.exception.TimeRegisterForbiddenException;
 import com.example.controleponto.repository.WorkdayRepository;
 import org.junit.jupiter.api.Test;
@@ -58,6 +59,18 @@ public class WorkdayServiceTest {
         List.of("2021-01-01T07:50:00", "2021-01-01T09:00:00", "2021-01-01T12:30:00")
                 .forEach(dateTime ->
                         assertThrows(TimeRegisterForbiddenException.class,
+                                () -> workdayService.registerTime(LocalDateTime.parse(dateTime)))
+                );
+    }
+
+    @Test
+    public void shouldThrowException_whenParamIsAlreadyRegistered() {
+        when(workdayRepository.findByDate(eq(LocalDate.parse("2021-01-01"))))
+                .thenReturn(mockOpenWorkday());
+
+        List.of("2021-01-01T08:00:00", "2021-01-01T12:00:00", "2021-01-01T13:00:00")
+                .forEach(dateTime ->
+                        assertThrows(TimeRegisterExistsException.class,
                                 () -> workdayService.registerTime(LocalDateTime.parse(dateTime)))
                 );
     }
