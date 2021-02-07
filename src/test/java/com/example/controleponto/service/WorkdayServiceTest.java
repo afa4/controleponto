@@ -32,7 +32,7 @@ public class WorkdayServiceTest {
     WorkdayService workdayService;
 
     @Test
-    public void whenRegisterTimeThenShouldSearchForWorkdayByDate() {
+    public void shouldSearchForWorkdayByDate() {
         when(workdayRepository.findByDate(any()))
                 .thenReturn(null);
 
@@ -42,7 +42,7 @@ public class WorkdayServiceTest {
     }
 
     @Test
-    public void whenRegisterTimeIfFetchedWorkdayIsFullThanShouldThrowException() {
+    public void shouldThrowException_whenFetchedWorkdayIsFull() {
         when(workdayRepository.findByDate(eq(LocalDate.parse("2021-01-01"))))
                 .thenReturn(mockWorkday());
 
@@ -51,7 +51,7 @@ public class WorkdayServiceTest {
     }
 
     @Test
-    public void whenRegisterTimeIfParamIsBeforePreviousDateTimeRegisterInTSameWorkdayThanShouldThrowException() {
+    public void shouldThrowException_whenParamIsBeforePreviousDateTimeRegisterInTheSameWorkday() {
         when(workdayRepository.findByDate(eq(LocalDate.parse("2021-01-01"))))
                 .thenReturn(mockOpenWorkday());
 
@@ -63,7 +63,7 @@ public class WorkdayServiceTest {
     }
 
     @Test
-    public void whenRegisterTimeIfParamIsAPausedAtRegisterShouldIncrementSecondsWorked() throws InterruptedException {
+    public void shouldIncrementSecondsWorked_whenParamIsAPausedAtRegister() throws InterruptedException {
         when(workdayRepository.findByDate(eq(LocalDate.parse("2021-01-01"))))
                 .thenReturn(mockStartedWorkday());
 
@@ -75,7 +75,21 @@ public class WorkdayServiceTest {
         Thread.sleep(500);
 
         assertEquals(14700L, workdayCaptor.getValue().getSecondsWorked());
+    }
 
+    @Test
+    public void shouldIncrementSecondsWorked_whenParamIsAnEndedAtRegister() throws InterruptedException {
+        when(workdayRepository.findByDate(eq(LocalDate.parse("2021-01-01"))))
+                .thenReturn(mockOpenWorkday());
+
+        var workdayCaptor = ArgumentCaptor.forClass(Workday.class);
+        doNothing().when(workdayRepository).updateWorkedSeconds(workdayCaptor.capture());
+
+        workdayService.registerTime(LocalDateTime.parse("2021-01-01T16:05:00"));
+
+        Thread.sleep(500);
+
+        assertEquals(25500L, workdayCaptor.getValue().getSecondsWorked());
     }
 
 }
