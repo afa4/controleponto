@@ -3,7 +3,7 @@ package com.example.controleponto.service;
 import com.example.controleponto.entity.Workday;
 import com.example.controleponto.entity.enumeration.TimeRegisterType;
 import com.example.controleponto.exception.CompletedWorkdayException;
-import com.example.controleponto.exception.ForbiddenRegisterException;
+import com.example.controleponto.exception.TimeRegisterForbiddenException;
 import com.example.controleponto.exception.TimeRegisterExistsException;
 import com.example.controleponto.repository.WorkdayRepository;
 import lombok.AllArgsConstructor;
@@ -34,7 +34,7 @@ public class WorkdayService {
         else if (isDateTimeAlreadyInserted(workday, dateTime))
             throw new TimeRegisterExistsException();
         else if (isDateTimeBeforePreviousRegister(workday, dateTime))
-            throw new ForbiddenRegisterException();
+            throw new TimeRegisterForbiddenException();
         else
             insertTimeRegister(workday, dateTime);
     }
