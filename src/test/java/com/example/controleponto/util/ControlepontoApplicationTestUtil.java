@@ -16,21 +16,30 @@ public class ControlepontoApplicationTestUtil {
                 .build();
     }
 
-    public static Workday mockOpenWorkday() {
+    public static Workday mockWorkdayWithStartedAt() {
+        return Workday.builder()
+                .id(1L)
+                .startedAt(LocalDateTime.parse("2021-01-01T08:00:00"))
+                .secondsWorked(0L)
+                .build();
+    }
+
+    public static Workday mockWorkdayWithPausedAt() {
+        return Workday.builder()
+                .id(1L)
+                .startedAt(LocalDateTime.parse("2021-01-01T08:00:00"))
+                .pausedAt(LocalDateTime.parse("2021-01-01T12:00:00"))
+                .secondsWorked(14400L)
+                .build();
+    }
+
+    public static Workday mockWorkdayWithReturnedAt() {
         return Workday.builder()
                 .id(1L)
                 .startedAt(LocalDateTime.parse("2021-01-01T08:00:00"))
                 .pausedAt(LocalDateTime.parse("2021-01-01T12:00:00"))
                 .returnedAt(LocalDateTime.parse("2021-01-01T13:00:00"))
                 .secondsWorked(14400L)
-                .build();
-    }
-
-    public static Workday mockStartedWorkday() {
-        return Workday.builder()
-                .id(1L)
-                .startedAt(LocalDateTime.parse("2021-01-01T08:00:00"))
-                .secondsWorked(0L)
                 .build();
     }
 }

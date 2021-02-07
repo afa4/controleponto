@@ -1,6 +1,7 @@
 package com.example.controleponto.service;
 
 import com.example.controleponto.entity.Workday;
+import com.example.controleponto.entity.enumeration.TimeRegisterType;
 import com.example.controleponto.exception.CompletedWorkdayException;
 import com.example.controleponto.exception.TimeRegisterExistsException;
 import com.example.controleponto.exception.TimeRegisterForbiddenException;
@@ -43,7 +44,17 @@ public class WorkdayServiceTest {
     }
 
     @Test
-    public void shouldThrowException_whenFetchedWorkdayIsFull() {
+    public void shouldInsertWorkday_whenFetchedWorkdayIsNull() {
+        when(workdayRepository.findByDate(any()))
+                .thenReturn(null);
+
+        workdayService.registerTime(LocalDateTime.parse("2020-01-01T08:00:00"));
+
+        verify(workdayRepository).insert(eq(LocalDateTime.parse("2020-01-01T08:00:00")));
+    }
+
+    @Test
+    public void shouldThrowCompletedWorkdayException_whenFetchedWorkdayIsCompleted() {
         when(workdayRepository.findByDate(eq(LocalDate.parse("2021-01-01"))))
                 .thenReturn(mockWorkday());
 
@@ -52,9 +63,9 @@ public class WorkdayServiceTest {
     }
 
     @Test
-    public void shouldThrowException_whenParamIsBeforePreviousDateTimeRegisterInTheSameWorkday() {
+    public void shouldThrowTimeRegisterForbiddenException_whenParamIsBeforePreviousDateTimeRegisterInTheSameWorkday() {
         when(workdayRepository.findByDate(eq(LocalDate.parse("2021-01-01"))))
-                .thenReturn(mockOpenWorkday());
+                .thenReturn(mockWorkdayWithReturnedAt());
 
         List.of("2021-01-01T07:50:00", "2021-01-01T09:00:00", "2021-01-01T12:30:00")
                 .forEach(dateTime ->
@@ -64,9 +75,9 @@ public class WorkdayServiceTest {
     }
 
     @Test
-    public void shouldThrowException_whenParamIsAlreadyRegistered() {
+    public void shouldThrowTimeRegisterExistsException_whenParamIsAlreadyRegistered() {
         when(workdayRepository.findByDate(eq(LocalDate.parse("2021-01-01"))))
-                .thenReturn(mockOpenWorkday());
+                .thenReturn(mockWorkdayWithReturnedAt());
 
         List.of("2021-01-01T08:00:00", "2021-01-01T12:00:00", "2021-01-01T13:00:00")
                 .forEach(dateTime ->
@@ -76,16 +87,62 @@ public class WorkdayServiceTest {
     }
 
     @Test
+    public void shouldUpdateWorkdayPausedAt_whenFetchedWorkdayPausedAtIsNull() {
+        when(workdayRepository.findByDate(eq(LocalDate.parse("2021-01-01"))))
+                .thenReturn(mockWorkdayWithStartedAt());
+
+        var workdayCaptor = ArgumentCaptor.forClass(Workday.class);
+        var registerTypeCaptor = ArgumentCaptor.forClass(TimeRegisterType.class);
+        doNothing().when(workdayRepository).setTimeRegister(workdayCaptor.capture(), registerTypeCaptor.capture());
+
+        workdayService.registerTime(LocalDateTime.parse("2021-01-01T12:05:10"));
+
+        assertEquals("2021-01-01T12:05:10", workdayCaptor.getValue().getPausedAt().toString());
+        assertEquals(TimeRegisterType.PAUSED_AT, registerTypeCaptor.getValue());
+    }
+
+    @Test
+    public void shouldUpdateWorkdayReturnedAt_whenFetchedWorkdayReturnedAtIsNull() {
+        when(workdayRepository.findByDate(eq(LocalDate.parse("2021-01-01"))))
+                .thenReturn(mockWorkdayWithPausedAt());
+
+        var workdayCaptor = ArgumentCaptor.forClass(Workday.class);
+        var registerTypeCaptor = ArgumentCaptor.forClass(TimeRegisterType.class);
+        doNothing().when(workdayRepository).setTimeRegister(workdayCaptor.capture(), registerTypeCaptor.capture());
+
+        workdayService.registerTime(LocalDateTime.parse("2021-01-01T13:30:54"));
+
+        assertEquals("2021-01-01T13:30:54", workdayCaptor.getValue().getReturnedAt().toString());
+        assertEquals(TimeRegisterType.RETURNED_AT, registerTypeCaptor.getValue());
+    }
+
+    @Test
+    public void shouldUpdateWorkdayEndedAt_whenFetchedWorkdayEndedAtIsNull() {
+        when(workdayRepository.findByDate(eq(LocalDate.parse("2021-01-01"))))
+                .thenReturn(mockWorkdayWithReturnedAt());
+
+        var workdayCaptor = ArgumentCaptor.forClass(Workday.class);
+        var registerTypeCaptor = ArgumentCaptor.forClass(TimeRegisterType.class);
+        doNothing().when(workdayRepository).setTimeRegister(workdayCaptor.capture(), registerTypeCaptor.capture());
+
+        workdayService.registerTime(LocalDateTime.parse("2021-01-01T17:00:00"));
+
+        assertEquals("2021-01-01T17:00", workdayCaptor.getValue().getEndedAt().toString());
+        assertEquals(TimeRegisterType.ENDED_AT, registerTypeCaptor.getValue());
+    }
+
+    @Test
     public void shouldIncrementSecondsWorked_whenParamIsAPausedAtRegister() throws InterruptedException {
         when(workdayRepository.findByDate(eq(LocalDate.parse("2021-01-01"))))
-                .thenReturn(mockStartedWorkday());
+                .thenReturn(mockWorkdayWithStartedAt());
 
         var workdayCaptor = ArgumentCaptor.forClass(Workday.class);
         doNothing().when(workdayRepository).updateWorkedSeconds(workdayCaptor.capture());
 
         workdayService.registerTime(LocalDateTime.parse("2021-01-01T12:05:00"));
 
-        Thread.sleep(500);
+        // Waiting async task
+        Thread.sleep(125);
 
         assertEquals(14700L, workdayCaptor.getValue().getSecondsWorked());
     }
@@ -93,14 +150,15 @@ public class WorkdayServiceTest {
     @Test
     public void shouldIncrementSecondsWorked_whenParamIsAnEndedAtRegister() throws InterruptedException {
         when(workdayRepository.findByDate(eq(LocalDate.parse("2021-01-01"))))
-                .thenReturn(mockOpenWorkday());
+                .thenReturn(mockWorkdayWithReturnedAt());
 
         var workdayCaptor = ArgumentCaptor.forClass(Workday.class);
         doNothing().when(workdayRepository).updateWorkedSeconds(workdayCaptor.capture());
 
         workdayService.registerTime(LocalDateTime.parse("2021-01-01T16:05:00"));
 
-        Thread.sleep(500);
+        // Waiting async task
+        Thread.sleep(125);
 
         assertEquals(25500L, workdayCaptor.getValue().getSecondsWorked());
     }
