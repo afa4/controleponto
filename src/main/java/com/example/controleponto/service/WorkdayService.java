@@ -27,22 +27,22 @@ public class WorkdayService {
     public void registerTime(LocalDateTime dateTime) {
         var workday = workdayRepository.findByDate(dateTime.toLocalDate());
 
-        if (isNull(workday)) {
+        if (isNull(workday))
             workdayRepository.insert(dateTime);
-        } else if (isDateTimeAlreadyInserted(workday, dateTime)) {
+        else if (nonNull(workday.getEndedAt()))
+            throw new CompletedWorkdayException();
+        else if (isDateTimeAlreadyInserted(workday, dateTime))
             throw new TimeRegisterExistsException();
-        } else if (isDateTimeBeforePreviousRegister(workday, dateTime)) {
+        else if (isDateTimeBeforePreviousRegister(workday, dateTime))
             throw new ForbiddenRegisterException();
-        } else {
+        else
             insertTimeRegister(workday, dateTime);
-        }
     }
 
     private boolean isDateTimeAlreadyInserted(Workday workday, LocalDateTime time) {
         return time.equals(workday.getStartedAt()) ||
                 time.equals(workday.getPausedAt()) ||
-                time.equals(workday.getReturnedAt()) ||
-                time.equals(workday.getEndedAt());
+                time.equals(workday.getReturnedAt());
     }
 
     private boolean isDateTimeBeforePreviousRegister(Workday workday, LocalDateTime time) {
@@ -61,8 +61,6 @@ public class WorkdayService {
             workday.setPausedAt(dateTime);
         } else if (isNull(workday.getReturnedAt())) {
             registerType = TimeRegisterType.RETURNED_AT;
-        } else if (nonNull(workday.getEndedAt())) {
-            throw new CompletedWorkdayException();
         } else {
             registerType = TimeRegisterType.ENDED_AT;
             shouldIncrementWorkedSeconds = true;

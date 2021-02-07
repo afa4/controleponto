@@ -15,4 +15,15 @@ public class ControlepontoApplicationTestUtil {
                 .secondsWorked(28800L)
                 .build();
     }
+
+    public static Workday mockOpenWorkday() {
+        return Workday.builder()
+                .id(1L)
+                .startedAt(LocalDateTime.parse("2021-01-01T08:00:00"))
+                .pausedAt(LocalDateTime.parse("2021-01-01T12:00:00"))
+                .returnedAt(LocalDateTime.parse("2021-01-01T13:00:00"))
+                .endedAt(null)
+                .secondsWorked(14400L)
+                .build();
+    }
 }

@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.example.controleponto.util.ControlepontoApplicationTestUtil.mockOpenWorkday;
 import static com.example.controleponto.util.ControlepontoApplicationTestUtil.mockWorkday;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -51,12 +52,12 @@ public class WorkdayServiceTest {
     @Test
     public void whenRegisterTimeIfParamIsBeforePreviousDateTimeRegisterInTSameWorkdayThanShouldThrowException() {
         when(workdayRepository.findByDate(eq(LocalDate.parse("2021-01-01"))))
-                .thenReturn(mockWorkday());
+                .thenReturn(mockOpenWorkday());
 
         List.of("2021-01-01T07:50:00", "2021-01-01T09:00:00", "2021-01-01T12:30:00")
-                .forEach(param ->
+                .forEach(dateTime ->
                         assertThrows(ForbiddenRegisterException.class,
-                                () -> workdayService.registerTime(LocalDateTime.parse(param)))
+                                () -> workdayService.registerTime(LocalDateTime.parse(dateTime)))
                 );
     }
 
