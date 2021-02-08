@@ -50,7 +50,12 @@ public class ReportService {
                 .workedHours(Duration.ofSeconds(calculateWorkedHours(workdays)))
                 .positiveHours(Duration.ofSeconds(calculatePositiveHours(workdays)))
                 .negativeHours(Duration.ofSeconds(calculateNegativeHours(workdays))) // TODO: Build dto workdaySummary
-                .build();
+                .workdays(workdays.stream()
+                        .map(workday -> ReportByMonthResp.WorkdaySummary.builder()
+                                        .timeAllocations(timeAllocationsByWorkday.get(workday.getId()))
+                                        .build())
+                        .collect(Collectors.toList())
+                ).build();
     }
 
     private Long calculateWorkedHours(List<Workday> workdays) {

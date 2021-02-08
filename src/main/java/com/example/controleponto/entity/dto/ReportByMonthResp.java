@@ -1,5 +1,6 @@
 package com.example.controleponto.entity.dto;
 
+import com.example.controleponto.entity.TimeAllocation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
@@ -30,15 +31,6 @@ public class ReportByMonthResp {
         @JsonProperty("horarios")
         private List<String> timeRegisters;
         @JsonProperty("alocacoes")
-        private List<TimeAllocationSummary> timeAllocations;
-
-        @Data
-        @Builder
-        public static class TimeAllocationSummary {
-            @JsonProperty("nomeProjeto")
-            private String description;
-            @JsonProperty("tempo")
-            private Duration secondsAllocated;
-        }
+        private List<TimeAllocation> timeAllocations;
     }
 }
