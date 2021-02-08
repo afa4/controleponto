@@ -15,13 +15,13 @@ public class ReportByMonthResp {
 
     @Data
     public static class WorkdaySummary {
-        private String day;
+        private String date;
         private List<String> timeRegisters;
     }
 
     @Data
     public static class TimeAllocationSummary {
-        private String projectName;
-        private String time;
+        private String description;
+        private String secondsAllocated;
     }
 }
