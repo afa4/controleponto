@@ -23,11 +23,9 @@ public class ReportController {
                 var month = Integer.parseInt(yearMonthArray[1]);
 
                 return ResponseEntity.ok(reportService.getReportByMonth(year, month));
-            } catch (NumberFormatException e) {
-                throw new RuntimeException();
+            } catch (NumberFormatException ignored) {
             }
-        } else {
-            throw new RuntimeException();
         }
+        throw new RuntimeException();
     }
 }

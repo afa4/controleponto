@@ -36,7 +36,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return errorMessage(HttpStatus.CONFLICT, ex.getMessage());
     }
 
-    @ExceptionHandler({CantAllocateTimeException.class, TimeToAllocateBiggerThanWorkedTimeException.class})
+    @ExceptionHandler({CantAllocateTimeException.class,
+            TimeToAllocateBiggerThanWorkedTimeException.class,
+            InvalidYearMonthFormatException.class})
     public ResponseEntity<Object> handleCantAllocateTimeException(
             RuntimeException ex, WebRequest request) {
         return errorMessage(HttpStatus.BAD_REQUEST, ex.getMessage());
