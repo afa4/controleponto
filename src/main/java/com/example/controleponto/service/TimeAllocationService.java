@@ -37,20 +37,23 @@ public class TimeAllocationService {
                 throw new TimeToAllocateBiggerThanWorkedTimeException();
             }
 
-            var sameDescriptionAllocation = timeAllocations.stream()
-                    .filter(timeAllocation -> timeAllocation.getDescription().equals(description))
-                    .findFirst()
-                    .orElse(null);
-
-            if (nonNull(sameDescriptionAllocation)) {
-                timeAllocationRepository.updateSecondsAllocatedById(sameDescriptionAllocation.getId(),
-                        sameDescriptionAllocation.getSecondsAllocated() + timeToAllocate);
-            } else {
-                timeAllocationRepository.insert(workday.getId(), description, timeToAllocate);
-            }
-
+            saveTimeAllocation(description, workday, timeToAllocate, timeAllocations);
         } else {
             throw new CantAllocateTimeException();
+        }
+    }
+
+    private void saveTimeAllocation(String description, com.example.controleponto.entity.Workday workday, long timeToAllocate, java.util.List<TimeAllocation> timeAllocations) {
+        var sameDescriptionAllocation = timeAllocations.stream()
+                .filter(timeAllocation -> timeAllocation.getDescription().equals(description))
+                .findFirst()
+                .orElse(null);
+
+        if (nonNull(sameDescriptionAllocation)) {
+            timeAllocationRepository.updateSecondsAllocatedById(sameDescriptionAllocation.getId(),
+                    sameDescriptionAllocation.getSecondsAllocated() + timeToAllocate);
+        } else {
+            timeAllocationRepository.insert(workday.getId(), description, timeToAllocate);
         }
     }
 
