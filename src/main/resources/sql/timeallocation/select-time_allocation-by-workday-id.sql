@@ -1,6 +1,6 @@
 SELECT id,
-       workday_id        as workdayId,
+       workday_id,
        description,
-       seconds_allocated as secondsAllocated
+       seconds_allocated
 FROM time_allocation
 where workday_id = :workdayId;

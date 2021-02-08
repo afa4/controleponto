@@ -28,7 +28,7 @@ public class TimeAllocationRepository {
     }
 
     public List<TimeAllocation> findAllByWorkdayId(Long workdayId) {
-        return template.queryForList(FIND_BY_WORKDAY_ID.getQuery(), Map.of("workdayId", workdayId), TimeAllocation.class);
+        return template.query(FIND_BY_WORKDAY_ID.getQuery(), Map.of("workdayId", workdayId), mapper);
     }
 
 }
