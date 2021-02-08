@@ -3,6 +3,8 @@ package com.example.controleponto.service;
 import com.example.controleponto.entity.TimeAllocation;
 import com.example.controleponto.entity.Workday;
 import com.example.controleponto.entity.dto.ReportByMonthResp;
+import com.example.controleponto.entity.summary.TimeAllocationSummary;
+import com.example.controleponto.entity.summary.WorkdaySummary;
 import com.example.controleponto.repository.TimeAllocationRepository;
 import com.example.controleponto.repository.WorkdayRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,16 +32,16 @@ public class ReportService {
     }
 
     public ReportByMonthResp getReportByMonth(int year, int month) {
-        var workDays = workdayRepository.findByYearAndMonth(year, month);
+        var workdays = workdayRepository.findByYearAndMonth(year, month);
+
+        var workdaysIds = workdays.stream()
+                .map(Workday::getId)
+                .collect(Collectors.toList());
 
         var timeAllocationsByWorkday = timeAllocationRepository
-                .findAllTimeAllocationsGroupedByWorkdaysIds(
-                        workDays.stream()
-                                .map(Workday::getId)
-                                .collect(Collectors.toList()));
+                .findAllTimeAllocationsGroupedByWorkdaysIds(workdaysIds);
 
-
-        return buildReport(year, month, workDays, timeAllocationsByWorkday);
+        return buildReport(year, month, workdays, timeAllocationsByWorkday);
     }
 
     private ReportByMonthResp buildReport(int year,
@@ -81,17 +83,29 @@ public class ReportService {
         return hours * 60 * 60;
     }
 
-    private List<ReportByMonthResp.WorkdaySummary> buildWorkdaySummaryList(List<Workday> workdays,
-                                                                           Map<Long, List<TimeAllocation>> timeAllocationsByWorkday) {
+    private List<WorkdaySummary> buildWorkdaySummaryList(List<Workday> workdays,
+                                                         Map<Long, List<TimeAllocation>> timeAllocationsByWorkday) {
         return workdays.stream().map(workday ->
-                ReportByMonthResp.WorkdaySummary.builder()
+                WorkdaySummary.builder()
                         .day(workday.getStartedAt().toLocalDate())
-                        .timeRegisters(List.of(
-                                onlyTime(workday.getStartedAt()),
-                                onlyTime(workday.getPausedAt()),
-                                onlyTime(workday.getReturnedAt()),
-                                onlyTime(workday.getEndedAt())))
-                        .timeAllocations(timeAllocationsByWorkday.get(workday.getId()))
+                        .timeRegisters(timeRegistersAsListOfTime(workday))
+                        .timeAllocations(buildTimeAllocationSummaryList(timeAllocationsByWorkday.get(workday.getId())))
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    private List<String> timeRegistersAsListOfTime(Workday workday) {
+        return List.of(onlyTime(workday.getStartedAt()),
+                onlyTime(workday.getPausedAt()),
+                onlyTime(workday.getReturnedAt()),
+                onlyTime(workday.getEndedAt()));
+    }
+
+    private List<TimeAllocationSummary> buildTimeAllocationSummaryList(List<TimeAllocation> timeAllocations) {
+        return timeAllocations.stream().map(timeAllocation ->
+                TimeAllocationSummary.builder()
+                        .project(timeAllocation.getDescription())
+                        .duration(Duration.ofSeconds(timeAllocation.getSecondsAllocated()))
                         .build())
                 .collect(Collectors.toList());
     }
