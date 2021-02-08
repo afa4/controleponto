@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Time;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +47,9 @@ public class TimeAllocationRepository {
                 .forEach(timeAllocation -> {
                     var key = map.get(timeAllocation.getWorkdayId());
                     if (key == null) {
-                        map.put(timeAllocation.getWorkdayId(), List.of(timeAllocation));
+                        List<TimeAllocation> allocations = new ArrayList<>();
+                        allocations.add(timeAllocation);
+                        map.put(timeAllocation.getWorkdayId(), allocations);
                     } else {
                         map.get(timeAllocation.getWorkdayId()).add(timeAllocation);
                     }

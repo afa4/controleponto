@@ -21,7 +21,7 @@ public class ReportByMonthResp {
     @JsonProperty("horasDevidas")
     private Duration negativeHours;
     @JsonProperty("registros")
-    private List<WorkdaySummary> workdays;
+    private List<WorkdaySummary> workdaySummaryList;
 
     @Data
     @Builder

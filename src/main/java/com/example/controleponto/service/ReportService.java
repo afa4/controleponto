@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.example.controleponto.util.LocalDateTimeUtil.onlyTime;
+
 @Service
 public class ReportService {
     private final WorkdayRepository workdayRepository;
@@ -44,18 +46,13 @@ public class ReportService {
                                           int month,
                                           List<Workday> workdays,
                                           Map<Long, List<TimeAllocation>> timeAllocationsByWorkday) {
-
         return ReportByMonthResp.builder()
                 .month(year + "-" + (Integer.toString(month).length() == 1 ? "0" + month : month))
                 .workedHours(Duration.ofSeconds(calculateWorkedHours(workdays)))
                 .positiveHours(Duration.ofSeconds(calculatePositiveHours(workdays)))
-                .negativeHours(Duration.ofSeconds(calculateNegativeHours(workdays))) // TODO: Build dto workdaySummary
-                .workdays(workdays.stream()
-                        .map(workday -> ReportByMonthResp.WorkdaySummary.builder()
-                                        .timeAllocations(timeAllocationsByWorkday.get(workday.getId()))
-                                        .build())
-                        .collect(Collectors.toList())
-                ).build();
+                .negativeHours(Duration.ofSeconds(calculateNegativeHours(workdays)))
+                .workdaySummaryList(buildWorkdaySummaryList(workdays, timeAllocationsByWorkday))
+                .build();
     }
 
     private Long calculateWorkedHours(List<Workday> workdays) {
@@ -82,5 +79,20 @@ public class ReportService {
 
     private Long asSeconds(Long hours) {
         return hours * 60 * 60;
+    }
+
+    private List<ReportByMonthResp.WorkdaySummary> buildWorkdaySummaryList(List<Workday> workdays,
+                                                                           Map<Long, List<TimeAllocation>> timeAllocationsByWorkday) {
+        return workdays.stream().map(workday ->
+                ReportByMonthResp.WorkdaySummary.builder()
+                        .day(workday.getStartedAt().toLocalDate())
+                        .timeRegisters(List.of(
+                                onlyTime(workday.getStartedAt()),
+                                onlyTime(workday.getPausedAt()),
+                                onlyTime(workday.getReturnedAt()),
+                                onlyTime(workday.getEndedAt())))
+                        .timeAllocations(timeAllocationsByWorkday.get(workday.getId()))
+                        .build())
+                .collect(Collectors.toList());
     }
 }
