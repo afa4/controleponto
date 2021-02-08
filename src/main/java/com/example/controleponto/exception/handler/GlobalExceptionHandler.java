@@ -1,9 +1,7 @@
 package com.example.controleponto.exception.handler;
 
 import com.example.controleponto.entity.dto.MessageResp;
-import com.example.controleponto.exception.CompletedWorkdayException;
-import com.example.controleponto.exception.TimeRegisterForbiddenException;
-import com.example.controleponto.exception.TimeRegisterExistsException;
+import com.example.controleponto.exception.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +34,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleTimeRegisterExistsException(
             TimeRegisterExistsException ex, WebRequest request) {
         return errorMessage(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler({CantAllocateTimeException.class, TimeToAllocateBiggerThanWorkedTimeException.class})
+    public ResponseEntity<Object> handleCantAllocateTimeException(
+            RuntimeException ex, WebRequest request) {
+        return errorMessage(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     private ResponseEntity<Object> errorMessage(HttpStatus status, String message) {
