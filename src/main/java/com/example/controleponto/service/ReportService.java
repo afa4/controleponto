@@ -5,7 +5,6 @@ import com.example.controleponto.entity.Workday;
 import com.example.controleponto.entity.dto.ReportByMonthResp;
 import com.example.controleponto.repository.TimeAllocationRepository;
 import com.example.controleponto.repository.WorkdayRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +14,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class ReportService {
     private final WorkdayRepository workdayRepository;
     private final TimeAllocationRepository timeAllocationRepository;
+    private final Long maximumWorkdaySeconds;
 
-    @Value("${report.maximum-workday-hours}")
-    private final Long maximumWorkdayHours;
+    public ReportService(WorkdayRepository workdayRepository,
+                         TimeAllocationRepository timeAllocationRepository,
+                         @Value("${report.maximum-workday-hours}") Long maximumWorkdayHours) {
+        this.workdayRepository = workdayRepository;
+        this.timeAllocationRepository = timeAllocationRepository;
+        this.maximumWorkdaySeconds = asSeconds(maximumWorkdayHours);
+    }
 
     public ReportByMonthResp getReportByMonth(int year, int month) {
         var workDays = workdayRepository.findByYearAndMonth(year, month);
@@ -56,20 +60,18 @@ public class ReportService {
     }
 
     private Long calculatePositiveHours(List<Workday> workdays) {
-        Long maximumSecondsToWork = asSeconds(maximumWorkdayHours);
         return workdays.stream()
                 .map(Workday::getSecondsWorked)
-                .filter(secondsWorked -> secondsWorked >= maximumSecondsToWork)
-                .map(secondsWorked -> secondsWorked - maximumSecondsToWork)
+                .filter(secondsWorked -> secondsWorked >= maximumWorkdaySeconds)
+                .map(secondsWorked -> secondsWorked - maximumWorkdaySeconds)
                 .reduce(0L, Long::sum);
     }
 
     private Long calculateNegativeHours(List<Workday> workdays) {
-        Long maximumSecondsToWork = asSeconds(maximumWorkdayHours);
         return workdays.stream()
                 .map(Workday::getSecondsWorked)
-                .filter(secondsWorked -> secondsWorked < maximumSecondsToWork)
-                .map(secondsWorked -> maximumSecondsToWork - secondsWorked)
+                .filter(secondsWorked -> secondsWorked < maximumWorkdaySeconds)
+                .map(secondsWorked -> maximumWorkdaySeconds - secondsWorked)
                 .reduce(0L, Long::sum);
     }
 

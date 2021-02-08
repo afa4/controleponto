@@ -36,6 +36,9 @@ public class TimeAllocationRepository {
     }
 
     public Map<Long, List<TimeAllocation>> findAllTimeAllocationsGroupedByWorkdaysIds(List<Long> workdaysIds) {
+        if(workdaysIds.isEmpty())
+            return Map.of();
+
         var map = new HashMap<Long, List<TimeAllocation>>();
 
         template.query(FIND_BY_WORKDAY_ID_IN.getQuery(), Map.of("ids", workdaysIds), mapper)
