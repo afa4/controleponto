@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ReportResp {
+public class ReportByMonthResp {
     private String month;
     private String workedHours;
     private String exceededHours;
