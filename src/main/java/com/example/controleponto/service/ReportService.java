@@ -49,7 +49,7 @@ public class ReportService {
                 .month(year + "-" + (Integer.toString(month).length() == 1 ? "0" + month : month))
                 .workedHours(Duration.ofSeconds(calculateWorkedHours(workdays)))
                 .positiveHours(Duration.ofSeconds(calculatePositiveHours(workdays)))
-                .negativeHours(Duration.ofSeconds(calculateNegativeHours(workdays)))
+                .negativeHours(Duration.ofSeconds(calculateNegativeHours(workdays))) // TODO: Build dto workdaySummary
                 .build();
     }
 
