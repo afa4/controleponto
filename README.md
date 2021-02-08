@@ -1,7 +1,15 @@
 # Controle de Ponto API
+
 API para controle pessoal de ponto eletrônico
 
-# Build e execução de testes
+## Tecnologias Utilizadas
+
+- Java
+- Spring Data JDBC
+- H2 Embedded Database
+- JUnit + Mockito
+
+## Build e execução de testes
 
 - Acessar diretório do projeto `cd controleponto/`
 - Executar comando maven install `./mvnw install`
