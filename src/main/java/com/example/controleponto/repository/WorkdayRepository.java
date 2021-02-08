@@ -27,7 +27,7 @@ public class WorkdayRepository {
         template.update(INSERT.getQuery(), Map.of("startedAt", startedAt));
     }
 
-    public void setTimeRegister(Workday workday, TimeRegisterType type) {
+    public void updateTimeRegister(Workday workday, TimeRegisterType type) {
         LocalDateTime dateTime;
         switch (type) {
             case PAUSED_AT:

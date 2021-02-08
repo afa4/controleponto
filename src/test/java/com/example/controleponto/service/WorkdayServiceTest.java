@@ -93,7 +93,7 @@ public class WorkdayServiceTest {
 
         var workdayCaptor = ArgumentCaptor.forClass(Workday.class);
         var registerTypeCaptor = ArgumentCaptor.forClass(TimeRegisterType.class);
-        doNothing().when(workdayRepository).setTimeRegister(workdayCaptor.capture(), registerTypeCaptor.capture());
+        doNothing().when(workdayRepository).updateTimeRegister(workdayCaptor.capture(), registerTypeCaptor.capture());
 
         workdayService.registerTime(LocalDateTime.parse("2021-01-01T12:05:10"));
 
@@ -108,7 +108,7 @@ public class WorkdayServiceTest {
 
         var workdayCaptor = ArgumentCaptor.forClass(Workday.class);
         var registerTypeCaptor = ArgumentCaptor.forClass(TimeRegisterType.class);
-        doNothing().when(workdayRepository).setTimeRegister(workdayCaptor.capture(), registerTypeCaptor.capture());
+        doNothing().when(workdayRepository).updateTimeRegister(workdayCaptor.capture(), registerTypeCaptor.capture());
 
         workdayService.registerTime(LocalDateTime.parse("2021-01-01T13:30:54"));
 
@@ -123,7 +123,7 @@ public class WorkdayServiceTest {
 
         var workdayCaptor = ArgumentCaptor.forClass(Workday.class);
         var registerTypeCaptor = ArgumentCaptor.forClass(TimeRegisterType.class);
-        doNothing().when(workdayRepository).setTimeRegister(workdayCaptor.capture(), registerTypeCaptor.capture());
+        doNothing().when(workdayRepository).updateTimeRegister(workdayCaptor.capture(), registerTypeCaptor.capture());
 
         workdayService.registerTime(LocalDateTime.parse("2021-01-01T17:00:00"));
 

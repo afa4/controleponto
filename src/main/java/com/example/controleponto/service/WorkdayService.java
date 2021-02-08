@@ -67,7 +67,7 @@ public class WorkdayService {
             shouldIncrementWorkedSeconds = true;
             workday.setEndedAt(dateTime);
         }
-        workdayRepository.setTimeRegister(workday, registerType);
+        workdayRepository.updateTimeRegister(workday, registerType);
 
         if (shouldIncrementWorkedSeconds) {
             incrementWorkedSecondsAsync(workday);
