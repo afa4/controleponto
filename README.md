@@ -1,4 +1,5 @@
 # Controle de Ponto API
+API para controle pessoal de ponto eletrônico
 
 # Build e execução de testes
 

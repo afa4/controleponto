@@ -15,6 +15,7 @@ public class DatasourceConfiguration {
         return new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
                 .addScript("sql/schema.sql")
+                .addScript("sql/data.sql")
                 .build();
     }
 }

@@ -30,8 +30,7 @@ public class TimeAllocationService {
 
             var currentAllocation = timeAllocations.stream()
                     .map(TimeAllocation::getSecondsAllocated)
-                    .reduce(Long::sum)
-                    .orElse(0L);
+                    .reduce(0L, Long::sum);
 
             if (currentAllocation + timeToAllocate > workday.getSecondsWorked()) {
                 throw new TimeToAllocateBiggerThanWorkedTimeException();

@@ -63,7 +63,7 @@ public class WorkdayRepository {
         }
     }
 
-    public List<Workday> findByYearAndMonth(String year, String month) {
+    public List<Workday> findByYearAndMonth(int year, int month) {
         return template.query(FIND_BY_YEAR_AND_MONTH.getQuery(), Map.of("y", year,
                 "m", month), mapper);
     }
