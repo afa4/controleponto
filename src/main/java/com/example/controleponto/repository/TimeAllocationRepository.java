@@ -11,8 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.controleponto.repository.query.TimeAllocationQuery.FIND_BY_WORKDAY_ID;
-import static com.example.controleponto.repository.query.TimeAllocationQuery.INSERT;
+import static com.example.controleponto.repository.query.TimeAllocationQuery.*;
 
 @Slf4j
 @Repository
@@ -29,6 +28,11 @@ public class TimeAllocationRepository {
 
     public List<TimeAllocation> findAllByWorkdayId(Long workdayId) {
         return template.query(FIND_BY_WORKDAY_ID.getQuery(), Map.of("workdayId", workdayId), mapper);
+    }
+
+    public void updateSecondsAllocatedById(Long timeAllocationId, Long secondsAllocated) {
+        template.update(UPDATE_SECONDS_ALLOCATED_BY_ID.getQuery(), Map.of("id", timeAllocationId,
+                "secondsAllocated", secondsAllocated));
     }
 
 }

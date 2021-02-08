@@ -25,8 +25,10 @@ public class TimeAllocationService {
         if (nonNull(workday) && (nonNull(workday.getPausedAt()) || nonNull(workday.getEndedAt()))) {
             var timeToAllocate = duration.getSeconds();
 
-            var currentAllocation = timeAllocationRepository
-                    .findAllByWorkdayId(workday.getId()).stream()
+            var timeAllocations = timeAllocationRepository
+                    .findAllByWorkdayId(workday.getId());
+
+            var currentAllocation = timeAllocations.stream()
                     .map(TimeAllocation::getSecondsAllocated)
                     .reduce(Long::sum)
                     .orElse(0L);
@@ -35,7 +37,18 @@ public class TimeAllocationService {
                 throw new TimeToAllocateBiggerThanWorkedTimeException();
             }
 
-            timeAllocationRepository.insert(workday.getId(), description, timeToAllocate);
+            var sameDescriptionAllocation = timeAllocations.stream()
+                    .filter(timeAllocation -> timeAllocation.getDescription().equals(description))
+                    .findFirst()
+                    .orElse(null);
+
+            if (nonNull(sameDescriptionAllocation)) {
+                timeAllocationRepository.updateSecondsAllocatedById(sameDescriptionAllocation.getId(),
+                        sameDescriptionAllocation.getSecondsAllocated() + timeToAllocate);
+            } else {
+                timeAllocationRepository.insert(workday.getId(), description, timeToAllocate);
+            }
+
         } else {
             throw new CantAllocateTimeException();
         }
