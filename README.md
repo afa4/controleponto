@@ -11,6 +11,7 @@ API para controle pessoal de ponto eletrônico
 
 ## Build e execução de testes
 
-- Acessar diretório do projeto `cd controleponto/`
+- Clonar ou baixar o repositório
+- Acessar diretório principal `cd controleponto/`
 - Executar comando maven install `./mvnw install`
 
