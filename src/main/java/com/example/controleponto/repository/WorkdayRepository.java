@@ -3,6 +3,7 @@ package com.example.controleponto.repository;
 import com.example.controleponto.entity.Workday;
 import com.example.controleponto.entity.enumeration.TimeRegisterType;
 import com.example.controleponto.repository.mapper.WorkdayMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -16,15 +17,11 @@ import static com.example.controleponto.repository.query.WorkdayQuery.*;
 
 @Slf4j
 @Repository
+@RequiredArgsConstructor
 public class WorkdayRepository {
 
     private final NamedParameterJdbcTemplate template;
     private final WorkdayMapper mapper;
-
-    public WorkdayRepository(NamedParameterJdbcTemplate template, WorkdayMapper mapper) {
-        this.template = template;
-        this.mapper = mapper;
-    }
 
     public void insert(LocalDateTime startedAt) {
         template.update(INSERT.getQuery(), Map.of("startedAt", startedAt));
