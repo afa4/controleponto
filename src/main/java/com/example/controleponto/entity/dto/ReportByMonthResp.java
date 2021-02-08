@@ -21,8 +21,6 @@ public class ReportByMonthResp {
     private Duration negativeHours;
     @JsonProperty("registros")
     private List<WorkdaySummary> workdays;
-    @JsonProperty("alocacoes")
-    private List<TimeAllocationSummary> timeAllocations;
 
     @Data
     @Builder
@@ -31,15 +29,16 @@ public class ReportByMonthResp {
         private LocalDate day;
         @JsonProperty("horarios")
         private List<String> timeRegisters;
-    }
+        @JsonProperty("alocacoes")
+        private List<TimeAllocationSummary> timeAllocations;
 
-    @Data
-    @Builder
-    public static class TimeAllocationSummary {
-        @JsonProperty("nomeProjeto")
-        private String description;
-        @JsonProperty("tempo")
-        private Duration secondsAllocated;
+        @Data
+        @Builder
+        public static class TimeAllocationSummary {
+            @JsonProperty("nomeProjeto")
+            private String description;
+            @JsonProperty("tempo")
+            private Duration secondsAllocated;
+        }
     }
-
 }
