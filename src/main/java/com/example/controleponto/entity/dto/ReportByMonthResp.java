@@ -18,10 +18,4 @@ public class ReportByMonthResp {
         private String date;
         private List<String> timeRegisters;
     }
-
-    @Data
-    public static class TimeAllocationSummary {
-        private String description;
-        private String secondsAllocated;
-    }
 }
