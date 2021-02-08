@@ -23,6 +23,6 @@ public class ReportService {
     }
 
     private Map<Long, TimeAllocation> fetchTimeAllocationsByWorkdaysIds(List<Long> workdaysIds) {
-
+        return null;
     }
 }
